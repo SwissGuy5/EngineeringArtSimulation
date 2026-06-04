@@ -1,16 +1,19 @@
+import { Particle } from "../entities/particle.js";
+
 export class EntityManager {
     constructor(world) {
         this.world = world;
     }
 
-    spawnRandomParticle() {
-        const x = Math.random() * this.world.bounds.width;
-        const y = Math.random() * this.world.bounds.height;
-        return this.spawnParticle(x, y);
+    spawnRandomParticle(size = 2) {
+        const { width, height } = this.world.getBounds();
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        return this.spawnParticle(x, y, size);
     }
-    spawnParticle(x, y) {
-        const { Particle } = require("../entities/Particle.js");
-        const entity = Particle(x, y);
+
+    spawnParticle(x, y, size = 2) {
+        const entity = Particle(x, y, size);
         return this.world.addEntity(entity);
     }
 }

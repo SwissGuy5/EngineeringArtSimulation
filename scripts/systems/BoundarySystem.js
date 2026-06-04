@@ -1,28 +1,20 @@
 export class BoundarySystem {
-    constructor(bounds) {
-        this.bounds = bounds;
-    }
-
     update(world) {
-        // Query all entities with a position
         const entities = world.query(["position"]);
 
-        const w = this.bounds.width;
-        const h = this.bounds.height;
+        const { width, height } = world.getBounds();
+
+        if (width <= 0 || height <= 0) {
+            return;
+        }
+
+        const wrap = (value, size) => ((value % size) + size) % size;
 
         for (const entity of entities) {
             const p = entity.components.position;
 
-            if (p.x < 0) p.x += w;
-            if (p.x > w) p.x -= w;
-
-            if (p.y < 0) p.y += h;
-            if (p.y > h) p.y -= h;
+            p.x = wrap(p.x, width);
+            p.y = wrap(p.y, height);
         }
-    }
-
-    setBounds(width, height) {
-        this.bounds.width = width;
-        this.bounds.height = height;
     }
 }

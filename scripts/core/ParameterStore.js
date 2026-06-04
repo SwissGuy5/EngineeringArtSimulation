@@ -7,7 +7,8 @@ export class ParameterStore {
             maxSpeed: 2,
             fieldScale: 0.002,
             backgroundColor: "#000000",
-            particleColor: "#ffffff"
+            particleColor: "#ffffff",
+            paused: false
         };
     }
 

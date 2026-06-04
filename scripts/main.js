@@ -7,32 +7,40 @@ import { MovementSystem } from "./systems/MovementSystem.js";
 import { RenderSystem } from "./systems/RenderSystem.js";
 import { CanvasRenderer } from "./render/CanvasRenderer.js";
 import { ParameterStore } from "./core/ParameterStore.js";
-import { Particle } from "./entities/Particle.js";
-import "./utils/loadUtils.js";
+import { Particle } from "./entities/particle.js";
+import { setupFullscreenShortcut } from "./utils/loadUtils.js";
 
 const canvas = document.getElementById("canvas");
 const renderer = new CanvasRenderer(canvas);
 const params = new ParameterStore();
 const world = new World();
-const bounds = { width: renderer.width, height: renderer.height };
-
-window.addEventListener("resize", () => {
-    bounds.width = renderer.width;
-    bounds.height = renderer.height;
-});
-
-for (let i = 0; i < params.get("particleCount"); i++) {
-    const x = Math.random() * bounds.width;
-    const y = Math.random() * bounds.height;
-    world.addEntity(Particle(x, y));
-}
-
 const field = new FlowField(params);
 const engine = new Engine();
 
+function syncViewport() {
+    const width = window.innerWidth;
+    const height = window.innerHeight;
+
+    renderer.resize(width, height);
+    world.setBounds(width, height);
+}
+
+setupFullscreenShortcut();
+window.addEventListener("resize", syncViewport);
+document.addEventListener("fullscreenchange", syncViewport);
+
+syncViewport();
+
+for (let i = 0; i < params.get("particleCount"); i++) {
+    const { width, height } = world.getBounds();
+    const x = Math.random() * width;
+    const y = Math.random() * height;
+    world.addEntity(Particle(x, y, params.get("particleSize")));
+}
+
 engine.addSystem(new FlowFieldSystem(field, params));
 engine.addSystem(new MovementSystem());
-engine.addSystem(new BoundarySystem(bounds));
+engine.addSystem(new BoundarySystem());
 engine.addSystem(new RenderSystem(renderer, params));
 
 function loop() {

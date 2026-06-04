@@ -2,6 +2,7 @@ export class World {
     constructor() {
         this.entities = new Map();
         this.nextEntityID = 0;
+        this.bounds = { width: 0, height: 0 };
     }
 
     addEntity(entity) {
@@ -12,6 +13,15 @@ export class World {
 
     getEntity(id) {
         return this.entities.get(id);
+    }
+
+    setBounds(width, height) {
+        this.bounds.width = Math.max(0, Number(width) || 0);
+        this.bounds.height = Math.max(0, Number(height) || 0);
+    }
+
+    getBounds() {
+        return { ...this.bounds };
     }
 
     query(requiredComponents = []) {
