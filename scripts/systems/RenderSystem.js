@@ -6,32 +6,16 @@ export class RenderSystem {
     }
 
     update(world) {
-        this.renderer.clear(
-            this.params.get(
-                "backgroundColor"
-            )
-        );
+        this.renderer.clear(this.params.get("backgroundColor"));
 
-        const entities = world.query(
-            [
-                "position",
-                "renderable"
-            ]
-        );
-
-        const color = this.params.get("particleColor");
+        const entities = world.query(["position", "renderable"]);
 
         for (const entity of entities) {
             const position = entity.components.position;
-
             const renderable = entity.components.renderable;
+            const color = renderable.color || this.params.get("particleColor");
 
-            this.renderer.drawPoint(
-                position.x,
-                position.y,
-                renderable.size,
-                color
-            );
+            this.renderer.drawPoint(position.x, position.y, renderable.size, color);
         }
     }
 }

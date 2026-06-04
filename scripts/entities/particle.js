@@ -2,6 +2,7 @@ import { Position } from "../components/position.js";
 import { Velocity } from "../components/velocity.js";
 import { FlowFollower } from "../components/flowFollower.js";
 import { Renderable } from "../components/renderable.js";
+import { randomRgbColor } from "../utils/color.js";
 
 export function Particle(x, y, size = 2) {
     return {
@@ -9,7 +10,7 @@ export function Particle(x, y, size = 2) {
             position: Position(x, y),
             velocity: Velocity(),
             flowFollower: FlowFollower(),
-            renderable: Renderable(size)
+            renderable: Renderable(size, randomRgbColor())
         }
     };
 }

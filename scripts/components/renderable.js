@@ -1,3 +1,3 @@
-export function Renderable(size = 2) {
-    return { size };
+export function Renderable(size = 2, color = "#ffffff") {
+    return { size, color };
 }
