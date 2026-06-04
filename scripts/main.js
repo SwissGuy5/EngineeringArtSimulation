@@ -10,11 +10,11 @@ import { ParameterStore } from "./core/ParameterStore.js";
 import { Particle } from "./entities/Particle.js";
 import "./utils/loadUtils.js";
 
+const canvas = document.getElementById("canvas");
+const renderer = new CanvasRenderer(canvas);
 const params = new ParameterStore();
 const world = new World();
 const bounds = { width: renderer.width, height: renderer.height };
-const canvas = document.getElementById("canvas");
-const renderer = new CanvasRenderer(canvas);
 
 window.addEventListener("resize", () => {
     bounds.width = renderer.width;
