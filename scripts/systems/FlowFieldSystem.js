@@ -6,8 +6,8 @@ export class FlowFieldSystem {
 
     update(world) {
         const entities = world.query(["position", "velocity", "flowFollower"]);
-        const strength = this.params.get("flowStrength");
-        const maxSpeed = this.params.get("maxSpeed");
+        const strength = this.params.get("fieldStrength");
+        const maxSpeed = this.params.get("particleMaxVelocity");
 
         for (const entity of entities) {
             const p = entity.components.position;
@@ -21,7 +21,6 @@ export class FlowFieldSystem {
 
             if (speed > maxSpeed) {
                 v.vx = (v.vx / speed) * maxSpeed;
-                v.vy = (v.vy / speed) * maxSpeed;
                 v.vy = (v.vy / speed) * maxSpeed;
             }
         }

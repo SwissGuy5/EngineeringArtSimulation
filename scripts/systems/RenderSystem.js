@@ -17,5 +17,7 @@ export class RenderSystem {
 
             this.renderer.drawPoint(position.x, position.y, renderable.size, color);
         }
+
+        this.renderer.flush();
     }
 }

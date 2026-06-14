@@ -9,11 +9,13 @@ export class EntityManager {
         const { width, height } = this.world.getBounds();
         const x = Math.random() * width;
         const y = Math.random() * height;
-        return this.spawnParticle(x, y, size);
+        const vx = (Math.random() - 0.5) * 2;
+        const vy = (Math.random() - 0.5) * 2;
+        return this.spawnParticle(x, y, vx, vy, size);
     }
 
-    spawnParticle(x, y, size = 2) {
-        const entity = Particle(x, y, size);
+    spawnParticle(x, y, vx = 0, vy = 0, size = 2) {
+        const entity = Particle(x, y, vx, vy, size);
         return this.world.addEntity(entity);
     }
 }

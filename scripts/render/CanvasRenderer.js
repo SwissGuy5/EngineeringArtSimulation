@@ -24,11 +24,18 @@ export class CanvasRenderer {
 
     drawPoint(x, y, size, color) {
         this.ctx.fillStyle = color;
-        this.ctx.fillRect(
-            x,
-            y,
-            size,
-            size
-        );
+        this.ctx.fillRect(x, y, size, size);
+    }
+
+    drawFps(fps) {
+        const ctx = this.ctx;
+
+        ctx.save();
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "16px monospace";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "top";
+        ctx.fillText(`FPS: ${fps}`, 12, 12);
+        ctx.restore();
     }
 }

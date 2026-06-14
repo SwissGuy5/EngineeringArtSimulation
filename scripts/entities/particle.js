@@ -4,11 +4,11 @@ import { FlowFollower } from "../components/flowFollower.js";
 import { Renderable } from "../components/renderable.js";
 import { randomRgbColor } from "../utils/color.js";
 
-export function Particle(x, y, size = 2) {
+export function Particle(x, y, vx = 0, vy = 0, size = 2) {
     return {
         components: {
             position: Position(x, y),
-            velocity: Velocity(),
+            velocity: Velocity(vx, vy),
             flowFollower: FlowFollower(),
             renderable: Renderable(size, randomRgbColor())
         }

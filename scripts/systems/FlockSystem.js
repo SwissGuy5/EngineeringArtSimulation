@@ -11,7 +11,7 @@ export class FlockSystem {
         const separationStrength = this.params.get("flockSeparationStrength");
         const cohesionStrength = this.params.get("flockCohesionStrength");
         const alignmentStrength = this.params.get("flockAlignmentStrength");
-        const maxSpeed = this.params.get("maxSpeed");
+        const maxSpeed = this.params.get("particleMaxVelocity");
 
         const radiusSq = radius * radius;
         const separationSq = separationDistance * separationDistance;
