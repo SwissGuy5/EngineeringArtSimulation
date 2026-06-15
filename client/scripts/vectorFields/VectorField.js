@@ -26,7 +26,9 @@ export class VectorField {
                 this.smoothField(1, 5, 1);
                 break;
             default:
-                throw new Error("Unknown field type: " + type);
+                this.neutralField();
+                break;
+                // throw new Error("Unknown field type: " + type);
         }
     }
 

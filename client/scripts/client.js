@@ -1,5 +1,5 @@
 import { updateParams } from "./main.js";
-const status = document.getElementById('status');
+// const status = document.getElementById('status');
 
 const ws = new WebSocket(
   `ws://${window.location.host}`
@@ -15,7 +15,7 @@ ws.onmessage = event => {
 
   if (msg.type === 'params') {
     updateParams(msg.data);
-    status.textContent = JSON.stringify(msg.data, null, 2);
+    // status.textContent = JSON.stringify(msg.data, null, 2);
   }
 };
 

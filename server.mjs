@@ -1,6 +1,6 @@
 import express from 'express';
 import http from 'http';
-import { WebSocketServer } from 'ws';
+import WebSocket, { WebSocketServer } from 'ws';
 import path from 'path';
 const __dirname = path.resolve();
 
@@ -18,9 +18,10 @@ wss.on('connection', (ws) => {
   ws.on('message', (message) => {
     try {
       const msg = JSON.parse(message);
+      console.log('Received message:', msg);
 
       switch (msg.type) {
-        case 'matlab-update':
+        case 'matlab':
           Object.assign(params, msg.data);
           console.log('Updated params:', params);
           broadcast({
@@ -69,6 +70,7 @@ function broadcast(obj) {
 //   res.sendStatus(200);
 // });
 
+// hostname -I
 const PORT = 8080;
 server.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port: ${PORT}`);
