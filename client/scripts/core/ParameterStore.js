@@ -48,4 +48,10 @@ export class ParameterStore {
     has(key) {
         return key in this.values;
     }
+
+    update(newValues) {
+        for (const [key, value] of Object.entries(newValues)) {
+            this.set(key, value);
+        }
+    }
 }

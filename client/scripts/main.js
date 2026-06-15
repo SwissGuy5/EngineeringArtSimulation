@@ -13,6 +13,11 @@ const engine = setupEngine(renderer, params);
 const world = new World();
 const entityManager = new EntityManager(world);
 
+export function updateParams(newParams) {
+    params.update(newParams);
+}
+import "./client.js"; 
+
 window.addEventListener("keydown", (event) => {
     if (event.repeat) {
         return;
