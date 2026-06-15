@@ -6,8 +6,8 @@ export function setupRendering() {
 }
 
 function setupField(renderer, params) {
-    const vectorField = new VectorField();
-    vectorField.initField("smooth");
+    const vectorField = new VectorField(params);
+    // vectorField.initField(0);
     return vectorField;
 }
 

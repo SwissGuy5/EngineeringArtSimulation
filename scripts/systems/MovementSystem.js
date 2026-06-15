@@ -5,20 +5,21 @@ export class MovementSystem {
 
     update(world) {
         const entities = world.query(["position", "velocity"]);
+        const velocityScaler = this.params.get("velocityScaler");
         for (const entity of entities) {
             const p = entity.components.position;
             const v = entity.components.velocity;
 
             // Cap Speed
-            const maxSpeed = this.params.get("particleMaxVelocity");
+            const maxSpeed = velocityScaler * this.params.get("particleMaxVelocity");
             const speed = Math.sqrt(v.vx * v.vx + v.vy * v.vy);
             if (speed > maxSpeed) {
                 v.vx = (v.vx / speed) * maxSpeed;
                 v.vy = (v.vy / speed) * maxSpeed;
             }
 
-            p.x += v.vx;
-            p.y += v.vy;
+            p.x += v.vx * velocityScaler;
+            p.y += v.vy * velocityScaler;
         }
     }
 }

@@ -3,15 +3,13 @@ export class ParameterStore {
         this.values = {
             particleCount: 5000,
             particleSize: 2,
-            particleColor: "#ffffff",
-            particleDistance: 1,
+            // particleColor: "#ffffff",
+            // particleDistance: 1,
             particleMaxVelocity: 5,
             backgroundColor: "#000000",
             fieldStrength: 1,
-            fieldShape: 0,
-            fieldSize: 10,
-            chaos: 0, // 0-1, where 0 is no chaos and 1 is maximum chaos
-
+            // fieldShape: 0,
+            // fieldSize: 10,
             // flowStrength: 0.15,
             // maxSpeed: 2,
             flockRadius: 20,
@@ -22,7 +20,13 @@ export class ParameterStore {
             flockMaxForce: 100,
             // flockFieldOfView: 180,
             showFps: true,
-            paused: false
+            paused: false,
+
+            color: "#ffffff",
+            velocityScaler: .8,
+            seperationDistance: 20,
+            fieldShape: 3,
+            chaos: 1 // 0-1, where 0 is no chaos and 1 is maximum chaos
         };
     }
 

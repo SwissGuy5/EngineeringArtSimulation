@@ -5,21 +5,38 @@ export class VectorField {
         // this.params = params;
         this.gridSize = 20;
         this.field;
-    }
+    }        
 
     initField(type) {
         switch (type) {
+            case "neutral":
+            case 0:
+                this.neutralField();
+                break;
             case "random":
+            case 1:
                 this.randomField();
                 break;
             case "perlin":
+            case 2:
                 this.perlinField();
                 break;
+            case 3:
             case "smooth":
                 this.smoothField(1, 5, 1);
                 break;
             default:
                 throw new Error("Unknown field type: " + type);
+        }
+    }
+
+    neutralField() {
+        this.field = [];
+        for (let x = 0; x < this.gridSize; x++) {
+            this.field[x] = [];
+            for (let y = 0; y < this.gridSize; y++) {
+                this.field[x][y] = { x: 0, y: 0 };
+            }
         }
     }
 
@@ -174,6 +191,7 @@ export class VectorField {
             smoothStep();
         }
     }
+
     sample(world, x, y) {
         const { width, height } = world.getBounds();
         const gridX = Math.floor((x / width) * this.gridSize);
