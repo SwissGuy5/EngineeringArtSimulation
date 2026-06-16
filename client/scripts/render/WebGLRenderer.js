@@ -96,12 +96,32 @@ export class WebGLRenderer {
 
         const fragmentShader = this.createShader(
             this.gl.FRAGMENT_SHADER,
-            `precision mediump float;
+            // `precision mediump float;
+            // varying vec4 v_color;
+
+            // void main() {
+            //     gl_FragColor = v_color;
+            // }`
+            `
+            precision mediump float;
             varying vec4 v_color;
 
             void main() {
-                gl_FragColor = v_color;
-            }`
+                // Convert gl_PointCoord (0..1) to centered coords (-1..1)
+                vec2 centered = gl_PointCoord * 2.0 - 1.0;
+
+                // Distance from center
+                float dist = length(centered);
+
+                // Smooth circle edge
+                float alpha = smoothstep(1.0, 0.9, dist);
+
+                // Discard pixels outside circle
+                if (dist > 1.0) discard;
+
+                gl_FragColor = vec4(v_color.rgb, v_color.a * alpha);
+            }
+            `
         );
 
         const program = this.gl.createProgram();

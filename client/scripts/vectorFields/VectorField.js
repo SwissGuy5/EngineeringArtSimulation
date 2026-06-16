@@ -25,6 +25,10 @@ export class VectorField {
             case "smooth":
                 this.smoothField(1, 5, 1);
                 break;
+            case 4:
+            case "spiral":
+                this.spiralField();
+                break;
             default:
                 this.neutralField();
                 break;
@@ -191,6 +195,65 @@ export class VectorField {
 
         for (let i = 0; i < iterations; i++) {
             smoothStep();
+        }
+    }
+
+    spiralField() {
+        this.field = [];
+
+        const cx = (this.gridSize - 1) / 2;
+        const cy = (this.gridSize - 1) / 2;
+        const arms = 4;
+        const twist = 1.15;
+        const branchChance = 0.35;
+
+        const clamp01 = (v) => Math.max(0, Math.min(1, v));
+        const smoothstep = (a, b, t) => {
+            const s = clamp01((t - a) / (b - a));
+            return s * s * (3 - 2 * s);
+        };
+
+        const hash = (x, y) => {
+            const n = Math.sin(x * 127.1 + y * 311.7 + 74.7) * 43758.5453123;
+            return n - Math.floor(n);
+        };
+
+        for (let x = 0; x < this.gridSize; x++) {
+            this.field[x] = [];
+            for (let y = 0; y < this.gridSize; y++) {
+                const dx = x - cx;
+                const dy = y - cy;
+                const dist = Math.hypot(dx, dy) / (this.gridSize * 0.5);
+                const angle = Math.atan2(dy, dx);
+
+                const spiralAngle = angle + dist * Math.PI * 2 * twist;
+                const armPhase = Math.cos(spiralAngle * arms);
+
+                const tangentX = -dy;
+                const tangentY = dx;
+                const radialX = dx;
+                const radialY = dy;
+
+                const armStrength = smoothstep(1, 0.15, Math.abs(armPhase));
+                const centerStrength = smoothstep(1, 0, dist);
+
+                let vx = tangentX * (0.9 * armStrength + 0.25 * centerStrength) + radialX * 0.12;
+                let vy = tangentY * (0.9 * armStrength + 0.25 * centerStrength) + radialY * 0.12;
+
+                const branchSeed = hash(x, y);
+                if (branchSeed > 1 - branchChance && dist > 0.18) {
+                    const branchAngle = spiralAngle + (branchSeed > 0.5 ? 1 : -1) * (0.45 + branchSeed * 0.35);
+                    vx += Math.cos(branchAngle) * 0.75;
+                    vy += Math.sin(branchAngle) * 0.75;
+                }
+
+                const swirl = 0.35 + 0.65 * (1 - dist);
+                vx += -dy * 0.03 * swirl;
+                vy += dx * 0.03 * swirl;
+
+                const len = Math.hypot(vx, vy) || 1;
+                this.field[x][y] = { x: vx / len, y: vy / len };
+            }
         }
     }
 

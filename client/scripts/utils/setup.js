@@ -17,6 +17,7 @@ import { MovementSystem } from "/scripts/systems/MovementSystem.js";
 import { FlockSystem } from "/scripts/systems/FlockSystem.js";
 import { RenderSystem } from "/scripts/systems/RenderSystem.js";
 import { VectorFieldSystem } from "/scripts/systems/VectorFieldSystem.js";
+import { ColorSystem } from "/scripts/systems/ColorSystem.js";
 import { VectorField } from "/scripts/vectorFields/VectorField.js";
 export function setupEngine (renderer, params) {
     const engine = new Engine()
@@ -25,7 +26,8 @@ export function setupEngine (renderer, params) {
     // engine.addSystem(new FlockSystem(params));
     engine.addSystem(new VectorFieldSystem(setupField(), params));
     engine.addSystem(new MovementSystem(params));
-    engine.addSystem(new BoundarySystem());
+    engine.addSystem(new BoundarySystem(params));
+    engine.addSystem(new ColorSystem(params));
     engine.addSystem(new RenderSystem(renderer, params));
 
     return engine

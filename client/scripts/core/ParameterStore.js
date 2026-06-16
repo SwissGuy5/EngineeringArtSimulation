@@ -2,7 +2,7 @@ export class ParameterStore {
     constructor() {
         this.values = {
             particleCount: 5000,
-            particleSize: 2,
+            particleSize: 5,
             // particleColor: "#ffffff",
             // particleDistance: 1,
             particleMaxVelocity: 5,
@@ -21,11 +21,13 @@ export class ParameterStore {
             // flockFieldOfView: 180,
             showFps: true,
             paused: false,
+            baseColor: "rgba(255, 255, 255, 1)",
+            targetColor: "rgb(92, 174, 209)",
 
-            color: "#ffffff",
+            colorFactor: 1, // 0-1, where 0 is white and 1 is target color
             velocityScaler: .8,
             seperationDistance: 20,
-            fieldShape: 3,
+            fieldShape: 4,
             chaos: 1 // 0-1, where 0 is no chaos and 1 is maximum chaos
         };
     }
@@ -56,7 +58,7 @@ export class ParameterStore {
         this.set("velocityScaler", defaults.velocityScaler + newValues.beatVelocity);
         this.set("seperationDistance", defaults.seperationDistance + newValues.rms_norm || 0); // TODO
         this.set("chaos", defaults.chaos + newValues.chaosVal || 0);
-        this.set("color", newValues.pitchNorm || 0); // TODO
+        this.set("colorFactor", newValues.pitchNorm || 0);
     }
 
     defaults(fieldShape = 0) {
