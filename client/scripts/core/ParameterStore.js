@@ -25,7 +25,7 @@ export class ParameterStore {
             color: "#ffffff",
             velocityScaler: .8,
             seperationDistance: 20,
-            fieldShape: 0,
+            fieldShape: 3,
             chaos: 1 // 0-1, where 0 is no chaos and 1 is maximum chaos
         };
     }
@@ -51,10 +51,32 @@ export class ParameterStore {
 
     update(newValues) {
         console.log('Field Shape:', newValues.dominantChannel);
-        this.set("velocityScaler", .7 + newValues.beatVelocity);
+        const defaults = this.defaults(newValues.dominantChannel);
         this.set("fieldShape", newValues.dominantChannel);
-        this.set("chaos", newValues.chaosVal || 0);
+        this.set("velocityScaler", defaults.velocityScaler + newValues.beatVelocity);
+        this.set("seperationDistance", defaults.seperationDistance + newValues.rms_norm || 0); // TODO
+        this.set("chaos", defaults.chaos + newValues.chaosVal || 0);
         this.set("color", newValues.pitchNorm || 0); // TODO
-        this.set("seperationDistance", newValues.rms_norm || 0); // TODO
+    }
+
+    defaults(fieldShape = 0) {
+        const obj = {
+            velocityScaler: .8,
+            seperationDistance: 20,
+            chaos: 1
+        }
+
+        switch (fieldShape) {
+            case 0:
+                return obj
+            case 1:
+                return obj
+            case 2:
+                return obj
+            case 3:
+                return obj
+            default:
+                return obj
+        }
     }
 }
