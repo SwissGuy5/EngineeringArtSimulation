@@ -201,11 +201,13 @@ export class VectorField {
     spiralField() {
         this.field = [];
 
-        const cx = (this.gridSize - 1) / 2;
-        const cy = (this.gridSize - 1) / 2;
         const arms = 4;
-        const twist = 1.15;
+        const baseTwist = 1;
         const branchChance = 0.35;
+
+        const centers = this.centers ?? [
+            { x: (this.gridSize - 1) * 0.5, y: (this.gridSize - 1) * 0.5, strength: 1.0 }
+        ];
 
         const clamp01 = (v) => Math.max(0, Math.min(1, v));
         const smoothstep = (a, b, t) => {
@@ -213,50 +215,84 @@ export class VectorField {
             return s * s * (3 - 2 * s);
         };
 
-        const hash = (x, y) => {
-            const n = Math.sin(x * 127.1 + y * 311.7 + 74.7) * 43758.5453123;
+        const hash = (x, y, seed = 0) => {
+            const n = Math.sin(x * 127.1 + y * 311.7 + seed * 91.7) * 43758.5453123;
             return n - Math.floor(n);
         };
 
         for (let x = 0; x < this.gridSize; x++) {
             this.field[x] = [];
+
             for (let y = 0; y < this.gridSize; y++) {
-                const dx = x - cx;
-                const dy = y - cy;
-                const dist = Math.hypot(dx, dy) / (this.gridSize * 0.5);
-                const angle = Math.atan2(dy, dx);
 
-                const spiralAngle = angle + dist * Math.PI * 2 * twist;
-                const armPhase = Math.cos(spiralAngle * arms);
+                let vx = 0, vy = 0;
 
-                const tangentX = -dy;
-                const tangentY = dx;
-                const radialX = dx;
-                const radialY = dy;
+                // accumulate multiple spiral centers
+                for (let i = 0; i < centers.length; i++) {
+                    const c = centers[i];
 
-                const armStrength = smoothstep(1, 0.15, Math.abs(armPhase));
-                const centerStrength = smoothstep(1, 0, dist);
+                    const dx = x - c.x;
+                    const dy = y - c.y;
 
-                let vx = tangentX * (0.9 * armStrength + 0.25 * centerStrength) + radialX * 0.12;
-                let vy = tangentY * (0.9 * armStrength + 0.25 * centerStrength) + radialY * 0.12;
+                    const distRaw = Math.hypot(dx, dy);
+                    const dist = distRaw / (this.gridSize * 0.5);
 
-                const branchSeed = hash(x, y);
-                if (branchSeed > 1 - branchChance && dist > 0.18) {
-                    const branchAngle = spiralAngle + (branchSeed > 0.5 ? 1 : -1) * (0.45 + branchSeed * 0.35);
-                    vx += Math.cos(branchAngle) * 0.75;
-                    vy += Math.sin(branchAngle) * 0.75;
+                    // nonlinear falloff = stronger spiral structure near center
+                    const falloff = Math.exp(-dist * 1.4);
+
+                    // slight deterministic jitter per center-field
+                    const jitterA = (hash(x, y, i * 10) - 0.5) * 0.35;
+                    const jitterT = (hash(x, y, i * 20) - 0.5) * 0.25;
+
+                    const angle = Math.atan2(dy, dx) + jitterA;
+
+                    const twist = baseTwist + jitterT;
+
+                    // stronger spiral coupling (nonlinear dist)
+                    const spiralAngle =
+                        angle + Math.pow(dist, 0.85) * Math.PI * 2 * twist;
+
+                    const armPhase = Math.cos(spiralAngle * arms);
+
+                    const tangentX = -dy;
+                    const tangentY = dx;
+                    const radialX = dx;
+                    const radialY = dy;
+
+                    const armStrength = smoothstep(1, 0.15, Math.abs(armPhase));
+                    const centerStrength = smoothstep(1, 0, dist);
+
+                    const influence =
+                        c.strength * falloff;
+
+                    vx += (tangentX * (0.95 * armStrength + 0.25 * centerStrength)
+                        + radialX * 0.12) * influence;
+
+                    vy += (tangentY * (0.95 * armStrength + 0.25 * centerStrength)
+                        + radialY * 0.12) * influence;
+
+                    // branching (more chaotic due to jittered angle)
+                    const branchSeed = hash(x, y, i * 33);
+
+                    if (branchSeed > 1 - branchChance && dist > 0.15) {
+                        const branchAngle =
+                            spiralAngle + (branchSeed > 0.5 ? 1 : -1) * (0.55 + branchSeed * 0.4);
+
+                        vx += Math.cos(branchAngle) * 0.7 * influence;
+                        vy += Math.sin(branchAngle) * 0.7 * influence;
+                    }
+
+                    // swirl reinforcement near centers
+                    const swirl = (0.4 + 0.6 * (1 - dist)) * influence;
+                    vx += -dy * 0.025 * swirl;
+                    vy += dx * 0.025 * swirl;
                 }
-
-                const swirl = 0.35 + 0.65 * (1 - dist);
-                vx += -dy * 0.03 * swirl;
-                vy += dx * 0.03 * swirl;
 
                 const len = Math.hypot(vx, vy) || 1;
                 this.field[x][y] = { x: vx / len, y: vy / len };
             }
         }
     }
-
     sample(world, x, y) {
         const { width, height } = world.getBounds();
         const gridX = Math.floor((x / width) * this.gridSize);

@@ -23,7 +23,7 @@ export function setupEngine (renderer, params) {
     const engine = new Engine()
 
     // engine.addSystem(new FlowFieldSystem(flowFields, params));
-    // engine.addSystem(new FlockSystem(params));
+    engine.addSystem(new FlockSystem(params));
     engine.addSystem(new VectorFieldSystem(setupField(), params));
     engine.addSystem(new MovementSystem(params));
     engine.addSystem(new BoundarySystem(params));
